@@ -3,12 +3,14 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 const reclamationSchema = new schema ({
-    image:{type: String, required: true},
-    prod_name:{type: String, required: true},
-    qte:{type: Number, required: true},
+    problem:{type: String, required: true},
+    product:{type: String, required: true},
+    type:{type: String, required: true},
+    place:{type: String, required: true},
+    nbr:{type: Number, required: true},
+    image:{type: String},
     date:{type: String},
-    reason: {type: String, required: true},
-    userid:{ type: mongoose.Types.ObjectId, required: true, ref: "user" },
+    userid:{ type: mongoose.Types.ObjectId, ref: "user" },
 })
 
 module.exports = mongoose.model('reclamation', reclamationSchema);

@@ -74,10 +74,10 @@ const GetAll = async (req, res) => {
     try {
         existinguser = await user.find();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({messag: 'success', data: existinguser});
+    return res.status(200).json({success: true, message: 'success', data: existinguser});
 }
 
 const FindById = async (req, res) => {
@@ -88,25 +88,26 @@ const FindById = async (req, res) => {
     try {
         existinguser = await user.findById(id);
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
     if (!existinguser) {
-        return res.status(500).json({message: "user doens't exist!!"});
+        return res.status(500).json({success: false, message: "user doens't exist!!"});
     }
 
-    return res.status(200).json({messag: 'success', data: existinguser});
+    return res.status(200).json({success: true, messag: 'success', data: existinguser});
 }
 
 const UpdateUser = async (req, res) => {
 
+    const { nom, prenom, tel, email } = req.body;
+    console.log(req.body);
     if (req.file){
         const avatar = req.file.filename;
     }
     if (req.body.password){
         const password = await bcrypt.hash(req.body.password, 12);
     }
-    const { nom, prenom, tel, email } = req.body;
     const {id} = req.params;
 
     let existinguser;
@@ -114,32 +115,34 @@ const UpdateUser = async (req, res) => {
     try {
         existinguser = await user.findById(id);
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
     if (!existinguser) {
-        return res.status(500).json({message: "user doens't exist!!"});
+        return res.status(500).json({success: false, message: "user doens't exist!!"});
     }
 
     existinguser.nom = nom;
     existinguser.prenom = prenom;
     existinguser.tel = tel;
     if(req.file) {
-        existinguser.avatar = avatar;
+        existinguser.avatar = req.file.filename;
     }
     existinguser.email = email;
     if(req.body.password) {
-        existinguser.password = password;
+        // const password = await bcrypt.hash(req.body.password, 12);
+        existinguser.password = await bcrypt.hash(req.body.password, 12);
     }
     
 
     try {
         await existinguser.save();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        console.log(error);
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({messag: 'success', data: existinguser});
+    return res.status(200).json({success: true, message: 'success', data: existinguser});
 
 }
 

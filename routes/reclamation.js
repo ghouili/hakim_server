@@ -8,7 +8,7 @@ route.get('/', reclamationController.GetAll );
 
 route.get('/:id', reclamationController.FindById );
 
-route.patch('/:id', reclamationController.Updatereclamation);
+route.patch('/:id',  fileUpload.single("image"), reclamationController.Updatereclamation);
 
 route.delete('/:id', reclamationController.Deletereclamation);
 

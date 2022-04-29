@@ -8,9 +8,9 @@ const userSchema = new schema ({
     prenom:{type: String, required: true},
     tel:{type: Number, required: true},
     avatar:{type: String, default: 'avatar.png'},
-    password: {type: String, required: true},
-    reclamations:[{ type: mongoose.Types.ObjectId, required: true, ref: "reclamation" }],
-    suggestions:[{ type: mongoose.Types.ObjectId, required: true, ref: "suggestion" }],
+    password: {type: String, },
+    reclamations:[{ type: mongoose.Types.ObjectId, ref: "reclamation" }],
+    suggestions:[{ type: mongoose.Types.ObjectId, ref: "suggestion" }],
 })
 
 module.exports = mongoose.model('user', userSchema);

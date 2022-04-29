@@ -8,7 +8,7 @@ route.get('/', userController.GetAll );
 
 route.get('/:id', userController.FindById );
 
-route.patch('/:id', userController.UpdateUser);
+route.patch('/:id', fileUpload.single("avatar"),  userController.UpdateUser);
 
 route.delete('/:id', userController.Deleteuser);
 

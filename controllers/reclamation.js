@@ -1,5 +1,6 @@
 const reclamation = require('../models/Reclamation');
 const user = require('../models/user');
+const moment = require('moment');
 
 const GetAll = async (req, res) => {
 
@@ -7,10 +8,10 @@ const GetAll = async (req, res) => {
     try {
         existingreclamation = await reclamation.find();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({message: 'success', data: existingreclamation});
+    return res.status(200).json({success: true, message: 'success', data: existingreclamation});
 }
 
 const FindById = async (req, res) => {
@@ -21,14 +22,14 @@ const FindById = async (req, res) => {
     try {
         existingreclamation = await reclamation.findById(id);
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
     if (!existingreclamation) {
-        return res.status(500).json({message: "reclamation doens't exist!!"});
+        return res.status(500).json({success: false, message: "reclamation doens't exist!!"});
     }
 
-    return res.status(200).json({messag: 'success', data: existingreclamation});
+    return res.status(200).json({success: true, messag: 'success', data: existingreclamation});
 }
 
 const Deletereclamation = async (req, res) => {
@@ -40,26 +41,27 @@ const Deletereclamation = async (req, res) => {
     try {
         existingreclamation = await reclamation.findById(id);
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong with DB", data: error});
     }
 
     if (!existingreclamation) {
-        return res.status(500).json({message: "reclamation doens't exist!!"});
+        return res.status(500).json({success: false, message: "reclamation doens't exist!!"});
     }
 
     try {
         await existingreclamation.remove();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({message: 'deleted successfully'});
+    return res.status(200).json({success: true, message: 'deleted successfully'});
 
 }
 
 const Updatereclamation = async (req, res) => {
 
-    const { pro_name, qte, date, reason } = req.body;
+    const { problem,  product, nbr, type, place } = req.body;
+    console.log(req.body);
     const {id} = req.params;
 
     let existingreclamation;
@@ -67,39 +69,54 @@ const Updatereclamation = async (req, res) => {
     try {
         existingreclamation = await reclamation.findById(id);
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong in DB", data: error});
     }
 
     if (!existingreclamation) {
-        return res.status(500).json({message: "reclamation doens't exist!!"});
+        return res.status(500).json({success: false, message: "reclamation doens't exist!!"});
     }
 
-    existingreclamation.pro_name = pro_name;
-    existingreclamation.qte = qte;
-    existingreclamation.date = date;
-    existingreclamation.reason = reason;
+    existingreclamation.problem = problem;
+    existingreclamation.nbr = nbr;
+    existingreclamation.product = product;
+    existingreclamation.type = type;
+    existingreclamation.place = place;
+    if(req.file){
+        existingreclamation.image = req.file.filename;
+
+    }
 
     try {
         await existingreclamation.save();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        console.log(error);
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({messag: 'success', data: existingreclamation});
+    return res.status(200).json({success: true, messag: 'successfully updated', data: existingreclamation});
 
 }
 
 const Ajout = async (req, res) => {
 
-    const { prod_name, qte, date, reason, userid } = req.body;
+    const { problem, userid, product, nbr, type, place } = req.body;
+
+    let image = 'natilait.png';
+    if(req.file) {
+        image = req.file.filename;
+    }
+
+    const date = moment(new Date()).format('YYYY-DD-YY HH:MM:SS');
 
     const newreclamation = new reclamation({
-        prod_name, 
-        qte,
-        date,
-        reason,
+        type,
+        problem,
+        product, 
+        place,
+        nbr,
         userid,
-        image: req.file.filename
+        image,
+        date
     })
 
     let existinguser;
@@ -107,7 +124,8 @@ const Ajout = async (req, res) => {
     try {
         existinguser = await user.findById(userid);
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        console.log(error);
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
     try {
@@ -115,10 +133,11 @@ const Ajout = async (req, res) => {
         existinguser.reclamations.push(newreclamation);
         await existinguser.save();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        console.log(error);
+        return res.status(500).json({success: false, message: "something went wrong while saving", data: error});
     }
 
-    return res.status(201).json({messag: 'success', data: newreclamation});
+    return res.status(201).json({success: true, message: 'success', data: newreclamation});
 }
 
 

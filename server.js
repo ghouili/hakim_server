@@ -28,7 +28,7 @@ server.use('/reclamation', reclamationtRouter);
 server.use('/suggestion', suggestiontRouter);
 
 server.use((req, res, next) => {
-    res.status(404).json({message: "page wasn't found!"})
+    res.status(404).json({success: false, message: "page wasn't found!"})
 });
 
 server.use((error, req, res, next) => {
