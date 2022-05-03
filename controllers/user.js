@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 
 const register = async (req, res) => {
 
-    let avatar;
+    let avatar= 'avatar.png';
     if (req.file){
         avatar = req.file.filename;
     }
@@ -14,11 +14,11 @@ const register = async (req, res) => {
     try {
         existinguser = await user.findOne({email : email});
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
     if (existinguser) {
-        return res.status(500).json({message: "user already exist!!"});
+        return res.status(500).json({success: false, message: "user already exist!!"});
     }
 
     const hashedpassword = await bcrypt.hash(password, 12);
@@ -35,10 +35,10 @@ const register = async (req, res) => {
     try {
         await newuser.save();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(201).json({message: 'success', data: newuser});
+    return res.status(201).json({success: true, message: 'success', data: newuser});
 }
 
 const login = async (req, res) => {

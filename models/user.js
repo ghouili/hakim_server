@@ -9,7 +9,7 @@ const userSchema = new schema ({
     tel:{type: Number, required: true},
     avatar:{type: String, default: 'avatar.png'},
     password: {type: String, },
-    reclamations:[{ type: mongoose.Types.ObjectId, ref: "reclamation" }],
+        
     suggestions:[{ type: mongoose.Types.ObjectId, ref: "suggestion" }],
 })
 
