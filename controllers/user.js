@@ -1,5 +1,15 @@
 const user = require('../models/user');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const generator = require('generate-password');
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'reclamation.natilait@gmail.com', // generated ethereal user
+      pass: 'natilait123', // generated ethereal password
+    },
+  });
 
 const register = async (req, res) => {
 
@@ -7,7 +17,11 @@ const register = async (req, res) => {
     if (req.file){
         avatar = req.file.filename;
     }
-    const { nom, prenom, tel, email, password } = req.body;
+    const { nom, prenom, tel, email } = req.body;
+    const password = generator.generate({
+        length: 10,
+        numbers: true
+    });
 
     let existinguser;
 
@@ -38,6 +52,28 @@ const register = async (req, res) => {
         return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
+    var mailOptions = {
+        from: 'reclamation.natilait@gmail.com',
+        to: email,
+        subject: ' BienVenue Chez Natilait Reclamations',
+        text: ' BienVenue Chez Natilait Reclamations',
+
+        html: `<h1 style="color: blue">Natilait</h1>
+            <h3 style="color: black">Centre Reclamation :</h3>
+            <b style="color: black">Bie,venue Mr(s) ${nom} ${prenom} vous eessayez de crieer un compte dans notre mobile app, pour acceder notre app merci d'utiliser<h3> votre email:</h3></b>
+            <h3 style="color: #1155CC " ><u>${email}</u></h3>
+            <h3 style="color: black"> Et Votre Mot de Passe est: </h3>
+            <h3 style="color: #1155CC " >${password}</h3>`,
+      };
+  
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+      }); 
+
     return res.status(201).json({success: true, message: 'success', data: newuser});
 }
 
@@ -52,20 +88,20 @@ const login = async (req, res) => {
     try {
         existinguser = await user.findOne({email: email});
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
     if (!existinguser) {
-        return res.status(500).json({message: "user doens't exist!!"});
+        return res.status(500).json({success: false, message: "user doens't exist!!"});
     }
 
-    const check = await bcrypt.compare(password, existinguser.password);
+    const check = await bcrypt.compare( password, existinguser.password);
 
     if (!check) {
-        return res.status(500).json({message: "Password is wrong"});
+        return res.status(500).json({success: false, message: "Password is wrong"});
     }
 
-    return res.status(201).json({message: 'success', data: existinguser});
+    return res.status(201).json({success: true, message: 'success', data: existinguser});
 }
 
 const GetAll = async (req, res) => {
@@ -105,9 +141,7 @@ const UpdateUser = async (req, res) => {
     if (req.file){
         const avatar = req.file.filename;
     }
-    if (req.body.password){
-        const password = await bcrypt.hash(req.body.password, 12);
-    }
+    
     const {id} = req.params;
 
     let existinguser;
@@ -120,6 +154,16 @@ const UpdateUser = async (req, res) => {
 
     if (!existinguser) {
         return res.status(500).json({success: false, message: "user doens't exist!!"});
+    }
+
+    if (req.body.password && req.body.currentPassword){
+        const currentPassword = req.body.currentPassword;
+        const check = await bcrypt.compare( currentPassword, existinguser.password);
+
+        if (!check) {
+            return res.status(500).json({success: false, message: "Current Password is wrong"});
+        }
+        const password = await bcrypt.hash(req.body.password, 12);
     }
 
     existinguser.nom = nom;
