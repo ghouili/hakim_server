@@ -9,8 +9,10 @@ const userSchema = new schema ({
     tel:{type: Number, required: true},
     avatar:{type: String, default: 'avatar.png'},
     password: {type: String, },
+    poste: {type: String, },
         
     suggestions:[{ type: mongoose.Types.ObjectId, ref: "suggestion" }],
+    tasks:[{ type: mongoose.Types.ObjectId, ref: "task" }],
 })
 
 module.exports = mongoose.model('user', userSchema);

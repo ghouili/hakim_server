@@ -17,7 +17,8 @@ const register = async (req, res) => {
     if (req.file){
         avatar = req.file.filename;
     }
-    const { nom, prenom, tel, email } = req.body;
+    const { nom, prenom, tel, email, poste } = req.body;
+    console.log(req.body);
     const password = generator.generate({
         length: 10,
         numbers: true
@@ -43,6 +44,7 @@ const register = async (req, res) => {
         tel,
         avatar,
         email, 
+        poste,
         password: hashedpassword
     })
 
@@ -82,7 +84,7 @@ const login = async (req, res) => {
     const {email, password} = req.body;
 
     // console.log({email: email, pass: password});
-    // console.log(req.body);
+    console.log(req.body);
     let existinguser;
 
     try {
@@ -92,13 +94,13 @@ const login = async (req, res) => {
     }
 
     if (!existinguser) {
-        return res.status(500).json({success: false, message: "user doens't exist!!"});
+        return res.status(200).json({success: false, message: "user doens't exist!!"});
     }
 
     const check = await bcrypt.compare( password, existinguser.password);
 
     if (!check) {
-        return res.status(500).json({success: false, message: "Password is wrong"});
+        return res.status(200).json({success: false, message: "Password is wrong"});
     }
 
     return res.status(201).json({success: true, message: 'success', data: existinguser});
@@ -136,7 +138,7 @@ const FindById = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
 
-    const { nom, prenom, tel, email } = req.body;
+    const { nom, prenom, tel, email, poste } = req.body;
     console.log(req.body);
     if (req.file){
         const avatar = req.file.filename;
@@ -169,6 +171,7 @@ const UpdateUser = async (req, res) => {
     existinguser.nom = nom;
     existinguser.prenom = prenom;
     existinguser.tel = tel;
+    existinguser.poste = poste;
     if(req.file) {
         existinguser.avatar = req.file.filename;
     }
@@ -192,9 +195,12 @@ const UpdateUser = async (req, res) => {
 
 const Ajout = async (req, res) => {
 
-    const { email, password } = req.body;
+    const { nom, prenom, tel, email, poste } = req.body;
 
     const newuser = new user({
+        nom,
+        prenom,
+        tel,
         email, 
         password
     })
@@ -217,20 +223,20 @@ const Deleteuser = async (req, res) => {
     try {
         existinguser = await user.findById(id);
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
     if (!existinguser) {
-        return res.status(500).json({message: "user doens't exist!!"});
+        return res.status(500).json({success: false, message: "user doens't exist!!"});
     }
 
     try {
         await existinguser.remove();
     } catch (error) {
-        return res.status(500).json({message: "something went wrong ", data: error});
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({message: 'deleted successfully'});
+    return res.status(200).json({success: true, message: 'deleted successfully'});
 
 }
 

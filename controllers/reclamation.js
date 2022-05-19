@@ -116,6 +116,7 @@ const Ajout = async (req, res) => {
         nbr,
         userid,
         image,
+        affected: false,
         date
     })
 

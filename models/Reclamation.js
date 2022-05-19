@@ -9,6 +9,7 @@ const reclamationSchema = new schema ({
     place:{type: String, required: true},
     nbr:{type: Number, required: true},
     image:{type: String},
+    affected:{type: Boolean},
     date:{type: String},
     userid:{ type: mongoose.Types.ObjectId, ref: "user" },
 })
