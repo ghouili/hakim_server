@@ -1,4 +1,4 @@
-const reclamation = require('../models/Reclamation');
+const service = require('../models/service');
 const user = require('../models/user');
 const moment = require('moment');
 
@@ -7,64 +7,64 @@ const moment = require('moment');
 const GetAll_for_Client = async (req, res) => {
     const {id} = req.body;
     // console.log(req.body);
-    let existingreclamation;
+    let existingservice;
     try {
-        existingreclamation = await reclamation.find({userid : id});
+        existingservice = await service.find({userid : id});
     } catch (error) {
         return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({success: true, message: 'success', data: existingreclamation});
+    return res.status(200).json({success: true, message: 'success', data: existingservice});
 }
 
 const GetAll = async (req, res) => {
 
-    let existingreclamation;
+    let existingservice;
     try {
-        existingreclamation = await reclamation.find();
+        existingservice = await service.find();
     } catch (error) {
         return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({success: true, message: 'success', data: existingreclamation});
+    return res.status(200).json({success: true, message: 'success', data: existingservice});
 }
 
 const FindById = async (req, res) => {
 
     const {id} = req.params;
-    let existingreclamation;
+    let existingservice;
 
     try {
-        existingreclamation = await reclamation.findById(id);
+        existingservice = await service.findById(id);
     } catch (error) {
         return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    if (!existingreclamation) {
-        return res.status(500).json({success: false, message: "reclamation doens't exist!!"});
+    if (!existingservice) {
+        return res.status(500).json({success: false, message: "service doens't exist!!"});
     }
 
-    return res.status(200).json({success: true, messag: 'success', data: existingreclamation});
+    return res.status(200).json({success: true, messag: 'success', data: existingservice});
 }
 
-const Deletereclamation = async (req, res) => {
+const Deleteservice = async (req, res) => {
  
     const {id} = req.params;
 
-    let existingreclamation;
+    let existingservice;
 
     try {
-        existingreclamation = await reclamation.findById(id);
+        existingservice = await service.findById(id);
     } catch (error) {
         return res.status(500).json({success: false, message: "something went wrong with DB", data: error});
     }
 
-    if (!existingreclamation) {
-        return res.status(500).json({success: false, message: "reclamation doens't exist!!"});
+    if (!existingservice) {
+        return res.status(500).json({success: false, message: "service doens't exist!!"});
     }
 
     try {
-        await existingreclamation.remove();
+        await existingservice.remove();
     } catch (error) {
         return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
@@ -73,48 +73,46 @@ const Deletereclamation = async (req, res) => {
 
 }
 
-const Updatereclamation = async (req, res) => {
+const Updateservice = async (req, res) => {
 
-    const { problem,  product, nbr, type, place } = req.body;
+    const { problem, type, place } = req.body;
     console.log(req.body);
     const {id} = req.params;
 
-    let existingreclamation;
+    let existingservice;
 
     try {
-        existingreclamation = await reclamation.findById(id);
+        existingservice = await service.findById(id);
     } catch (error) {
         return res.status(500).json({success: false, message: "something went wrong in DB", data: error});
     }
 
-    if (!existingreclamation) {
-        return res.status(500).json({success: false, message: "reclamation doens't exist!!"});
+    if (!existingservice) {
+        return res.status(500).json({success: false, message: "service doens't exist!!"});
     }
 
-    existingreclamation.problem = problem;
-    existingreclamation.nbr = nbr;
-    existingreclamation.product = product;
-    existingreclamation.type = type;
-    existingreclamation.place = place;
+    existingservice.problem = problem;
+    existingservice.type = type;
+    existingservice.place = place;
     if(req.file){
-        existingreclamation.image = req.file.filename;
+        existingservice.image = req.file.filename;
 
     }
 
     try {
-        await existingreclamation.save();
+        await existingservice.save();
     } catch (error) {
         console.log(error);
         return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
 
-    return res.status(200).json({success: true, messag: 'successfully updated', data: existingreclamation});
+    return res.status(200).json({success: true, messag: 'successfully updated', data: existingservice});
 
 }
 
 const Ajout = async (req, res) => {
 
-    const { problem, userid, product, nbr, type, place } = req.body;
+    const { problem, userid, type, place } = req.body;
 
     let image = 'natilait.png';
     if(req.file) {
@@ -123,12 +121,10 @@ const Ajout = async (req, res) => {
 
     const date = moment(new Date()).format('YYYY-DD-YY HH:MM:SS');
 
-    const newreclamation = new reclamation({
+    const newservice = new service({
         type,
         problem,
-        product, 
         place,
-        nbr,
         userid,
         image,
         affected: false,
@@ -145,15 +141,15 @@ const Ajout = async (req, res) => {
     }
 
     try {
-        await newreclamation.save();
-        existinguser.reclamations.push(newreclamation);
+        await newservice.save();
+        existinguser.services.push(newservice);
         await existinguser.save();
     } catch (error) {
         console.log(error);
         return res.status(500).json({success: false, message: "something went wrong while saving", data: error});
     }
 
-    return res.status(201).json({success: true, message: 'success', data: newreclamation});
+    return res.status(201).json({success: true, message: 'success', data: newservice});
 }
 
 
@@ -161,8 +157,8 @@ const Ajout = async (req, res) => {
 
 exports.GetAll = GetAll;
 exports.FindById = FindById;
-exports.Updatereclamation = Updatereclamation;
+exports.Updateservice = Updateservice;
 exports.Ajout = Ajout;
-exports.Deletereclamation = Deletereclamation;
+exports.Deleteservice = Deleteservice;
 exports.GetAll_for_Client = GetAll_for_Client;
 

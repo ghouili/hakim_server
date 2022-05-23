@@ -10,6 +10,7 @@ const userRouter = require('./routes/user');
 const reclamationtRouter = require('./routes/reclamation');
 const suggestiontRouter = require('./routes/suggestion');
 const taskRouter = require('./routes/task');
+const ServiceRouter = require('./routes/service');
 
 const server = express();
 
@@ -28,6 +29,7 @@ server.use('/user', userRouter);
 server.use('/reclamation', reclamationtRouter);
 server.use('/suggestion', suggestiontRouter);
 server.use('/task', taskRouter);
+server.use('/service', ServiceRouter);
 
 server.use((req, res, next) => {
     res.status(404).json({success: false, message: "page wasn't found!"})

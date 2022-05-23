@@ -9,8 +9,9 @@ const userSchema = new schema ({
     tel:{type: Number, required: true},
     avatar:{type: String, default: 'avatar.png'},
     password: {type: String, },
-    poste: {type: String, },
-        
+    poste: {type: String, },        
+    reclamations:[{ type: mongoose.Types.ObjectId, ref: "reclamation" }],
+    services:[{ type: mongoose.Types.ObjectId, ref: "service" }],
     suggestions:[{ type: mongoose.Types.ObjectId, ref: "suggestion" }],
     tasks:[{ type: mongoose.Types.ObjectId, ref: "task" }],
 })
