@@ -4,6 +4,8 @@ const route = express.Router();
 
 route.get('/', suggestionController.GetAll );
 
+route.post('/', suggestionController.GetAll_Client );
+
 route.get('/:id', suggestionController.FindById );
 
 route.patch('/:id', suggestionController.Updatesuggestion);

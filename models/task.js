@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 const taskSchema = new schema ({
-    message:{type: String, required: true},
+    message:{type: String,},
     date:{type: String,},
     type_Nc:{type: String,},
     mtotif_nc:{type: String,},

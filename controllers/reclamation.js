@@ -2,6 +2,20 @@ const reclamation = require('../models/Reclamation');
 const user = require('../models/user');
 const moment = require('moment');
 
+
+
+const GetAll_for_Client = async (req, res) => {
+    const {id} = req.body;
+    let existingreclamation;
+    try {
+        existingreclamation = await reclamation.find({userid : id});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
+    }
+
+    return res.status(200).json({success: true, message: 'success', data: existingreclamation});
+}
+
 const GetAll = async (req, res) => {
 
     let existingreclamation;
@@ -149,4 +163,5 @@ exports.FindById = FindById;
 exports.Updatereclamation = Updatereclamation;
 exports.Ajout = Ajout;
 exports.Deletereclamation = Deletereclamation;
+exports.GetAll_for_Client = GetAll_for_Client;
 

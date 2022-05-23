@@ -4,6 +4,8 @@ const route = express.Router();
 
 route.get('/', taskController.GetAll );
 
+route.get('/assistant/:id', taskController.GetAll_assistant );
+
 route.get('/:id', taskController.FindById );
 
 route.patch('/:id', taskController.Updatetask);

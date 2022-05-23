@@ -33,7 +33,7 @@ const register = async (req, res) => {
     }
 
     if (existinguser) {
-        return res.status(500).json({success: false, message: "user already exist!!"});
+        return res.status(200).json({success: false, message: "user already exist!!"});
     }
 
     const hashedpassword = await bcrypt.hash(password, 12);
@@ -77,6 +77,63 @@ const register = async (req, res) => {
       }); 
 
     return res.status(201).json({success: true, message: 'success', data: newuser});
+}
+
+const forgotten = async (req, res) => {
+
+    const {email} = req.body;
+
+    // console.log({email: email, pass: password});
+    // console.log(req.body);
+    let existinguser;
+
+    try {
+        existinguser = await user.findOne({email: email});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
+    }
+
+    const password = generator.generate({
+        length: 10,
+        numbers: true
+    });
+    const hashedpassword = await bcrypt.hash(password, 12);
+
+    if (!existinguser) {
+        return res.status(200).json({success: false, message: "user doens't exist!!"});
+    }
+
+    existinguser.password = hashedpassword;
+
+    try {
+        await existinguser.save();
+    } catch (error) {
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
+    }
+
+    var mailOptions = {
+        from: 'reclamation.natilait@gmail.com',
+        to: email,
+        subject: ' BienVenue Chez Natilait Reclamations',
+        text: ' BienVenue Chez Natilait Reclamations',
+
+        html: `<h1 style="color: blue">Natilait</h1>
+            <h3 style="color: black">Centre Reclamation :</h3>
+            <b style="color: black">Bie,venue Mr(s) ${existinguser.nom} ${existinguser.prenom} vous eessayez de crieer un compte dans notre mobile app, pour acceder notre app merci d'utiliser<h3> votre email:</h3></b>
+            <h3 style="color: #1155CC " ><u>${email}</u></h3>
+            <h3 style="color: black"> Et Votre Nouveau Mot de Passe est: </h3>
+            <h3 style="color: #1155CC " >${password}</h3>`,
+      };
+  
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+      });
+
+    return res.status(201).json({success: true, message: 'success', data: existinguser});
 }
 
 const login = async (req, res) => {
@@ -247,4 +304,5 @@ exports.Ajout = Ajout;
 exports.Deleteuser = Deleteuser;
 exports.register = register;
 exports.login = login;
+exports.forgotten = forgotten;
 

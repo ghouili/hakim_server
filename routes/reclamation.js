@@ -6,6 +6,8 @@ const route = express.Router();
 
 route.get('/', reclamationController.GetAll );
 
+route.get('/', reclamationController.GetAll_for_Client );
+
 route.get('/:id', reclamationController.FindById );
 
 route.patch('/:id',  fileUpload.single("image"), reclamationController.Updatereclamation);

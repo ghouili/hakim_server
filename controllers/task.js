@@ -15,6 +15,19 @@ const GetAll = async (req, res) => {
     return res.status(200).json({success: true, messag: 'success', data: existingtask});
 }
 
+const GetAll_assistant = async (req, res) => {
+
+    const {id} = req.params;
+    let existingretask;
+    try {
+        existingretask = await task.find({userid : id});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
+    }
+
+    return res.status(200).json({success: true, message: 'success', data: existingretask});
+}
+
 const FindById = async (req, res) => {
 
     const {id} = req.params;
@@ -170,4 +183,5 @@ exports.FindById = FindById;
 exports.Updatetask = Updatetask;
 exports.Ajout = Ajout;
 exports.Deletetask = Deletetask;
+exports.GetAll_assistant = GetAll_assistant;
 

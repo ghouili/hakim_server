@@ -17,4 +17,6 @@ route.post('/register', fileUpload.single("avatar"), userController.register);
 
 route.post('/login', userController.login);
 
+route.post('/forgotten', userController.forgotten);
+
 module.exports = route;

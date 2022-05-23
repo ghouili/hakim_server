@@ -2,6 +2,19 @@ const suggestion = require('../models/suggestion');
 const user = require('../models/user');
 const moment = require('moment');
 
+const GetAll_Client = async (req, res) => {
+
+    const {id} = req.body;
+    let existingsuggestion;
+    try {
+        existingsuggestion = await suggestion.find({userid: id});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
+    }
+
+    return res.status(200).json({success: true, messag: 'success', data: existingsuggestion});
+}
+
 const GetAll = async (req, res) => {
 
     let existingsuggestion;
@@ -127,4 +140,5 @@ exports.FindById = FindById;
 exports.Updatesuggestion = Updatesuggestion;
 exports.Ajout = Ajout;
 exports.Deletesuggestion = Deletesuggestion;
+exports.GetAll_Client = GetAll_Client;
 
