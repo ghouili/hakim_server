@@ -121,7 +121,7 @@ const Ajout = async (req, res) => {
         image = req.file.filename;
     }
 
-    const date = moment(new Date()).format('YYYY-DD-YY HH:MM:SS');
+    const date = moment(new Date()).format('DD-MM-YYYY HH:MM:SS');
 
     const newreclamation = new reclamation({
         type,
