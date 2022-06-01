@@ -50,6 +50,7 @@ const taskSchema = new schema ({
     motif_nc: { type: String},
     destruction: { type: String},
     observation: { type: String},
+    done: { type: Boolean},
     
     userid:{ type: mongoose.Types.ObjectId, required: true, ref: "user" },
     reclamationid:{ type: mongoose.Types.ObjectId, required: true, ref: "user" },

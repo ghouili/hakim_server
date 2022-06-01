@@ -187,7 +187,7 @@ const FindById = async (req, res) => {
     }
 
     if (!existinguser) {
-        return res.status(500).json({success: false, message: "user doens't exist!!"});
+        return res.status(200).json({success: false, message: "user doens't exist!!"});
     }
 
     return res.status(200).json({success: true, messag: 'success', data: existinguser});

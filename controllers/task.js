@@ -15,12 +15,25 @@ const GetAll = async (req, res) => {
     return res.status(200).json({success: true, messag: 'success', data: existingtask});
 }
 
+const GetAll_done = async (req, res) => {
+
+    const {id} = req.params;
+    let existingretask;
+    try {
+        existingretask = await task.find({done : true});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "something went wrong ", data: error});
+    }
+
+    return res.status(200).json({success: true, message: 'success', data: existingretask});
+}
+
 const GetAll_assistant = async (req, res) => {
 
     const {id} = req.params;
     let existingretask;
     try {
-        existingretask = await task.find({userid : id});
+        existingretask = await task.find({userid : id, done: null});
     } catch (error) {
         return res.status(500).json({success: false, message: "something went wrong ", data: error});
     }
@@ -133,7 +146,7 @@ const Updatetask = async (req, res) => {
     }
 
     if (!existingtask) {
-        return res.status(500).json({success: false, message: "task doens't exist!!"});
+        return res.status(200).json({success: false, message: "task doens't exist!!"});
     }
 
 
@@ -161,7 +174,7 @@ const Updatetask = async (req, res) => {
     existingtask.date_approb = date_approb;
     existingtask.comment = comment;
     existingtask.date_retour = date_retour;
-    existingtask.piece_joint = piece_joint;
+    // existingtask.piece_joint = piece_joint;
     existingtask.natilait = natilait;
     existingtask.qte_totale = qte_totale;
     existingtask.DLC = DLC;
@@ -180,6 +193,7 @@ const Updatetask = async (req, res) => {
     existingtask.destruction = destruction;
     existingtask.observation = observation;
     existingtask.type_reclam = type_reclam;
+    existingtask.done = true;
 
     try {
         await existingtask.save();
@@ -291,6 +305,7 @@ const Ajout = async (req, res) => {
         motif_nc: null,
         destruction: null,
         observation: null,
+        done: null,
     })
 
     let existinguser;
@@ -338,4 +353,5 @@ exports.Updatetask = Updatetask;
 exports.Ajout = Ajout;
 exports.Deletetask = Deletetask;
 exports.GetAll_assistant = GetAll_assistant;
+exports.GetAll_done = GetAll_done;
 
